@@ -73,5 +73,15 @@ let objTestCopy1 = deepCopy(objTest);
 
 console.log(typeof(objTest1.a), typeof(objTestCopy1.a));
 
-
-
+// updating on recursive
+const setIn = (arr, val, obj) => {
+    const newObj = Number.isInteger(arr[0]) ? [] : {};
+  
+    Object.keys(obj).forEach(k => {
+      newObj[k] = k !== arr[0] ? obj[k] : null;
+    });
+  
+    newObj[arr[0]] =
+      arr.length > 1 ? setIn(arr.slice(1), val, obj[arr[0]]) : val;
+    return newObj;
+  };
