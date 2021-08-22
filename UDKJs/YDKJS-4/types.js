@@ -85,6 +85,20 @@ boxing can be used for refernce in functions
 
 JSON.stringify can also be used to stringify the primitive values but it does not work on objects with circular refrences
 Also if an object has toJson method on it it will be called first to serailize the object
-That 
+if you intend to stringify an object that contain illegal values and is not approprate for stringification you can define your own toJson method on it.
+
+parseInt vs number
+parseInt is tolerant of numeric characters in the input while the number is not
+
+var b = 42px
+
+Number(b) //NaN
+
+parseInt(b) 42
+
+
+
+
+
 
 */
