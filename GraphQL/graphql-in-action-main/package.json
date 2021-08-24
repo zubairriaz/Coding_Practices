@@ -24,6 +24,7 @@
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
+    "dataloader": "^2.0.0",
     "eslint": "^7.20.0",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
