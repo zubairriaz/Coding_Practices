@@ -7,12 +7,14 @@ import {
 	GraphQLString,
 } from "graphql";
 import { Approach } from "./approachType";
+import { SearchResultItem } from "./search-result-item";
 import { Author } from "./userType";
 
 export const Task = new GraphQLObjectType({
 	name: "Task",
 	description: "To get Task Infomration",
-	fields: {
+    interfaces:()=>[SearchResultItem],
+	fields: ()=>({
 		id: {
 			type: new GraphQLNonNull(GraphQLID),
 		},
@@ -44,5 +46,5 @@ export const Task = new GraphQLObjectType({
                 return loaders.approaches.load(source.id)
             }
         }
-	},
+	}),
 });
