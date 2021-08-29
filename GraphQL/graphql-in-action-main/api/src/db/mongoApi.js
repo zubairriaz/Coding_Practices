@@ -13,7 +13,19 @@ export const mongoApiWrapper = async () => {
 			.toArray();
 	};
 	return {
-		mutators: {},
+		mutators: {
+			approachDetailCreate: async (approachId, detailsInput) => {
+				const details = {};
+				detailsInput.forEach(({ content, category }) => {
+					details[category] = details[category] || [];
+					details[category].push(content);
+				});
+				return mdb.collection("approachDetails").insertOne({
+					pgId: approachId,
+					...details,
+				});
+			},
+		},
 		loaders: {
 			detailLists: async (approachIds) => {
 				console.log(approachIds);

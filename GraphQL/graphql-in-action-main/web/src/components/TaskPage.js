@@ -2,54 +2,47 @@ import React, { useState, useEffect } from 'react';
 
 import { useStore } from '../store';
 import NewApproach from './NewApproach';
-import Approach from './Approach';
-import TaskSummary from './TaskSummary';
+import Approach, { APPROACH_FRAGMENT } from './Approach';
+import TaskSummary, { TASK_SUMMARY_FRAGMENT } from './TaskSummary';
+import { gql } from '@apollo/client';
 
 /** GIA NOTES
  * Define GraphQL operations here...
  */
+ const TASK_INFO = gql`
+ query taskInfo($taskId: ID!) {
+   taskInfo(id: $taskId) {
+     id
+     ...TaskSummary
+     approach {
+       id
+       ...ApproachFragment
+     }
+   }
+ }
+ ${TASK_SUMMARY_FRAGMENT}
+ ${APPROACH_FRAGMENT}
+`;
 
-const mockTaskInfo = {
-  id: 42,
-  content: 'Mock Task content',
-  author: { username: 'mock-author' },
-  tags: ['tag1', 'tag2'],
-  approachList: [
-    {
-      id: 42,
-      content: 'Mock Approach content',
-      author: { username: 'mock-author' },
-      voteCount: 0,
-      detailList: [
-        {
-          content: 'Mock note...',
-          category: 'NOTE',
-        },
-      ],
-    },
-  ],
-};
+
 
 export default function TaskPage({ taskId }) {
-  const { request, AppLink } = useStore();
+  const { query, AppLink } = useStore();
   const [taskInfo, setTaskInfo] = useState(null);
   const [showAddApproach, setShowAddApproach] = useState(false);
   const [highlightedApproachId, setHighlightedApproachId] = useState();
 
   useEffect(() => {
     if (!taskInfo) {
-      /** GIA NOTES
-       *
-       *  1) Invoke the query to get the information of a Task object:
-       *     (You can't use `await` here but `promise.then` is okay)
-       *
-       *  2) Change the line below to use the returned data instead of mockTaskInfo:
-       *
-       */
+      query({query:TASK_INFO, variables: { taskId } }).then(
+        ({ data }) => {
+          setTaskInfo(data.taskInfo);
+        },
+      );
 
-      setTaskInfo(mockTaskInfo); // TODO: Replace mockTaskInfo with API_RESP_FOR_taskInfo
+       // TODO: Replace mockTaskInfo with API_RESP_FOR_taskInfo
     }
-  }, [taskId, taskInfo, request]);
+  }, [taskId, taskInfo, query]);
 
   if (!taskInfo) {
     return <div className="loading">Loading...</div>;
@@ -86,12 +79,12 @@ export default function TaskPage({ taskId }) {
             </div>
           )}
         </div>
-        <h2>Approaches ({taskInfo.approachList.length})</h2>
-        {taskInfo.approachList.map((approach) => (
-          <div key={approach.id} id={approach.id}>
+        <h2>Approaches ({taskInfo.approach.length})</h2>
+        {taskInfo.approach.map((appr) => (
+          <div key={appr.id} id={appr.id}>
             <Approach
-              approach={approach}
-              isHighlighted={highlightedApproachId === approach.id}
+              approach={appr}
+              isHighlighted={highlightedApproachId === appr.id}
             />
           </div>
         ))}

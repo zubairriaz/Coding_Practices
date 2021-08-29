@@ -10,6 +10,7 @@ import {
 import { SearchResultItem } from "../types/search-result-item";
 
 import { Task } from "../types/taskMainListType";
+import { Me } from "../types/userType";
 
 const NumbersInRange = new GraphQLObjectType({
 	name: "NumbersInRange",
@@ -29,7 +30,7 @@ const NumbersInRange = new GraphQLObjectType({
 
 export const Query = new GraphQLObjectType({
 	name: "Query",
-	fields: {
+	fields: () => ({
 		currentDateTime: {
 			type: GraphQLNonNull(GraphQLString),
 			resolve: () => {
@@ -87,5 +88,11 @@ export const Query = new GraphQLObjectType({
 				return loaders.searchResults.load(args.searchTerm);
 			},
 		},
-	},
+		me:{
+			type:Me,
+			resolve:(source,args,{currentUser})=>{
+				return currentUser
+			}
+		}
+	}),
 });
